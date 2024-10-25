@@ -99,22 +99,30 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var countLabel: UILabel!
     
+    @IBOutlet weak var yesButton: UIButton!
+    @IBOutlet weak var noButton: UIButton!
     
-    //батон экшн
+    //батон экшн да
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
+        //отключаем кнопки
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = true
         
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
-        
     }
     
+    // батон экшн нет
     @IBAction private func noButtonClicked(_ sender: UIButton) {
+        //отключаем кнопки
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
+        
         let currentQuestion = questions[currentQuestionIndex]
         let givenAnswer = false
         
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
-        
     }
     
     // переменные-счетчики
@@ -137,7 +145,11 @@ final class MovieQuizViewController: UIViewController {
         countLabel.text = step.questionNumber
         
         // Устанавливаем рамку в черный цвет при показе следующего вопроса
-            imageView.layer.borderColor = UIColor.YPBlack.cgColor
+        imageView.layer.borderWidth = 0
+        
+        // Включаем кнопки после отображения вопроса
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
     }
     
     //метод перехода в сценарий
@@ -167,7 +179,7 @@ final class MovieQuizViewController: UIViewController {
             message: resultMessage,
             preferredStyle: .alert
         )
-
+        
         let action = UIAlertAction(title: "Начать заново", style: .default) { _ in
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
@@ -177,25 +189,31 @@ final class MovieQuizViewController: UIViewController {
             let viewModel = self.convert(model: firstQuestion)
             self.show(quiz: viewModel)
         }
-
+        
         alert.addAction(action)
         self.present(alert, animated: true, completion: nil)
     }
-
-    private func ShowAnswerResult(_ isCorrect: Bool) {
+    
+    // Функция показа результата + окрас рамки
+    private func showAnswerResult(_ isCorrect: Bool) {
         if isCorrect {
             correctAnswers += 1
         }
         
         imageView.layer.masksToBounds = true
-            imageView.layer.borderWidth = 8
-            imageView.layer.borderColor = isCorrect ? UIColor.YPGreen.cgColor : UIColor.YPRed.cgColor
-            
+        imageView.layer.borderWidth = 8
+        imageView.layer.borderColor = isCorrect ? UIColor.YPGreen.cgColor : UIColor.YPRed.cgColor
+        
+        // Отключаем кнопки, чтобы предотвратить повторные нажатия
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.showNextQuestionOrResults()
-            }
+            self.showNextQuestionOrResults()
         }
+    }
     
+    // функция показа результата в конце
     private func show (quiz result: QuizResultsViewModel) {
         let alert = UIAlertController(
             title: result.title,
@@ -212,8 +230,8 @@ final class MovieQuizViewController: UIViewController {
             self.show(quiz: viewModel)
         }
         
-            alert.addAction(action)
-            self.present(alert, animated: true, completion: nil)
+        alert.addAction(action)
+        self.present(alert, animated: true, completion: nil)
     }
     
 }

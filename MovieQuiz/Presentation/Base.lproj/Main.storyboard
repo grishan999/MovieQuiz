@@ -125,8 +125,10 @@
                     </view>
                     <connections>
                         <outlet property="countLabel" destination="Z5h-cD-dD3" id="2vH-mv-tkU"/>
-                        <outlet property="imageView" destination="6p2-6l-aci" id="mRa-xw-IdY"/>
+                        <outlet property="imageView" destination="6p2-6l-aci" id="qwX-Az-UEs"/>
+                        <outlet property="noButton" destination="Jkv-o1-4Sx" id="Owv-z0-aoZ"/>
                         <outlet property="textLabel" destination="QEU-D9-f6c" id="oq4-Tf-s37"/>
+                        <outlet property="yesButton" destination="HHS-iS-Fp7" id="UWj-h3-eCG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

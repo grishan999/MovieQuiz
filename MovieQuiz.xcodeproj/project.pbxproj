@@ -21,6 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0408A10D2CD0305500291DE8 /* QuestionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactory.swift; sourceTree = "<group>"; };
+		0408A1122CD04C4000291DE8 /* QuizStepViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizStepViewModel.swift; sourceTree = "<group>"; };
+		0408A1132CD04C9F00291DE8 /* QuizResultsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizResultsViewModel.swift; sourceTree = "<group>"; };
+		0408A1142CD04CA800291DE8 /* QuizQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizQuestion.swift; sourceTree = "<group>"; };
 		042A12612CC56F7E00E8E25C /* YS Display-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YS Display-Bold.ttf"; sourceTree = "<group>"; };
 		042A12622CC56F7E00E8E25C /* YS Display-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "YS Display-Medium.ttf"; sourceTree = "<group>"; };
 		AD1ABAAE2831907B00B3E448 /* MovieQuiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieQuiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -47,6 +51,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0408A10B2CD02DDD00291DE8 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				0408A10D2CD0305500291DE8 /* QuestionFactory.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		0408A10E2CD04BE100291DE8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0408A1142CD04CA800291DE8 /* QuizQuestion.swift */,
+				0408A1132CD04C9F00291DE8 /* QuizResultsViewModel.swift */,
+				0408A1122CD04C4000291DE8 /* QuizStepViewModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		042A12632CC56F7E00E8E25C /* MovieQuizFonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -93,6 +115,8 @@
 		AD1ABAA52831907B00B3E448 = {
 			isa = PBXGroup;
 			children = (
+				0408A10E2CD04BE100291DE8 /* Models */,
+				0408A10B2CD02DDD00291DE8 /* Services */,
 				AD1ABAB02831907B00B3E448 /* MovieQuiz */,
 				AD1ABAAF2831907B00B3E448 /* Products */,
 			);

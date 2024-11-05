@@ -1,24 +1,46 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
-    // MARK: - Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        if let firstQuestion = questionFactory.requestNextQuestion() {
-            currentQuestion = firstQuestion
-            let viewModel = convert(model: firstQuestion)
-            show(quiz: viewModel)
-        }
-    }
-
+    private var alertPresenter: AlertPresenter?
+    private var statisticService: StatisticServiceProtocol?
+    
     private let questionsAmount: Int = 10
-    private var questionFactory: QuestionFactory = QuestionFactory()
+    private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     
+    // MARK: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        alertPresenter = AlertPresenter()
+        statisticService = StatisticService()
+        
+        let factory = QuestionFactory()
+        factory.setup(delegate: self)
+        questionFactory = factory
+        
+        resetQuiz()
+        
+    }
+    
+    // MARK: - QuestionFactoryDelegate
+    
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        guard let question = question else {
+            return
+        }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.show(quizStep: viewModel)
+        }
+    }
     
     
     // окрас рамки после ответа юзера
@@ -35,6 +57,7 @@ final class MovieQuizViewController: UIViewController {
         }
     }
     
+    // MARK: - аутлеты и экшны
     //аутлеты
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
@@ -45,102 +68,104 @@ final class MovieQuizViewController: UIViewController {
     
     //батон экшн да
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        disableButtons()
+        setButtonsEnabled(false)
         guard let currentQuestion = currentQuestion else {
             return
         }
-               showAnswerResult(isCorrect: currentQuestion.correctAnswer)
+        showAnswerResult(isCorrect: currentQuestion.correctAnswer)
     }
     
     // батон экшн нет
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        disableButtons()
+        setButtonsEnabled(false)
         guard let currentQuestion = currentQuestion else {
             return
         }
-               showAnswerResult(isCorrect: !currentQuestion.correctAnswer)
+        showAnswerResult(isCorrect: !currentQuestion.correctAnswer)
     }
     
-    // Функция для выключения кнопок
-    private func disableButtons() {
-           yesButton.isEnabled = false
-           noButton.isEnabled = false
-       }
-       
-       // Функция для включения кнопок
-       private func enableButtons() {
-           yesButton.isEnabled = true
-           noButton.isEnabled = true
-       }
-       
-       // Конверт модели в отображение
-       private func convert(model: QuizQuestion) -> QuizStepViewModel {
-           QuizStepViewModel(
-                       image: UIImage(named: model.image) ?? UIImage(),
-                       question: model.text,
-                       questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
-       }
-       
-       // Показ следующего вопроса или результата
+
+    
+    // Конверт модели в отображение
+    private func convert(model: QuizQuestion) -> QuizStepViewModel {
+        QuizStepViewModel(
+            image: UIImage(named: model.image) ?? UIImage(),
+            question: model.text,
+            questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
+        )
+    }
+    
+    // Показ следующего вопроса или результата
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
             let text = correctAnswers == questionsAmount ?
             "Поздравляем, вы ответили на 10 из 10!" :
             "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
-            show(quiz: viewModel)
+            
+            let resultViewModel = QuizResultsViewModel(title: "Результаты", text: text, buttonText: "Начать заново")
+            showQuizResult(resultViewModel) // Вызываем метод для показа результата
+            
         } else {
             currentQuestionIndex += 1
-            if let nextQuestion = questionFactory.requestNextQuestion() {
-                currentQuestion = nextQuestion
-                let viewModel = convert(model: nextQuestion)
-
-                show(quiz: viewModel)
-            }
+            questionFactory?.requestNextQuestion()
         }
     }
-
-       // Показать состояние вопроса
-       private func show(quiz step: QuizStepViewModel) {
-           imageView.image = step.image
-           textLabel.text = step.question
-           countLabel.text = step.questionNumber
-           imageView.layer.borderWidth = 0
-           enableButtons()
-       }
-       
-       // Показать результат квиза
-    private func show(quiz result: QuizResultsViewModel) {
-        let alert = UIAlertController(title: result.title, message: result.text, preferredStyle: .alert)
-
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
-            guard let self = self else { return }
-
-            // Сбрасываем состояние квиза
-            self.currentQuestionIndex = 0
-            self.correctAnswers = 0
-
-            // Показ первого вопроса
-            if let firstQuestion = self.questionFactory.requestNextQuestion() {
-                self.currentQuestion = firstQuestion
-                let viewModel = self.convert(model: firstQuestion)
-
-                self.show(quiz: viewModel)
-            }
-        }
+    
+    // Показать состояние вопроса
+    private func show(quizStep step: QuizStepViewModel) {
+        imageView.image = step.image
+        textLabel.text = step.question
+        countLabel.text = step.questionNumber
+        imageView.layer.borderWidth = 0
+        setButtonsEnabled(true)
+    }
+    
+    // Показать результат квиза
+    private func showQuizResult(_ result: QuizResultsViewModel) {
+        guard let statisticService = statisticService else { return }
+        // обновление статистики
+        statisticService.store(correct: correctAnswers, total: questionsAmount)
         
-        alert.addAction(action)
-        present(alert, animated: true, completion: nil)
-       }
-       
-       // Сброс квиза
-       private func resetQuiz() {
-           currentQuestionIndex = 0
-           correctAnswers = 0
-           let firstQuestion = questions[currentQuestionIndex]
-           let viewModel = convert(model: firstQuestion)
-           show(quiz: viewModel)
-       }
-   }
+        // месседж в алерт (проверить + поправить!!!!!!)
+        let bestGame = statisticService.bestGame
+        let totalAccuracy = String(format: "%.2f", statisticService.totalAccuracy)
+        let gamesCount = statisticService.gamesCount
+        
+        let message = """
+                Ваш результат: \(correctAnswers)/\(questionsAmount)
+                Количество сыгранных квизов: \(gamesCount)
+                Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))
+                Средняя точность: \(totalAccuracy)%
+                """
+        
+        // Модель алерта
+        let alertModel = AlertModel (
+            title: "Этот раунд окончен!",
+            message: message,
+            buttonText: "Сыграть еще раз",
+            completion: { [weak self] in
+                self?.resetQuiz()
+            }
+        )
+        alertPresenter?.showAlert(on: self, with: alertModel)
+    }
+    
+    // MARK: -  вспомогательные методы
+    // Сброс квиза
+    private func resetQuiz() {
+        currentQuestionIndex = 0
+        correctAnswers = 0
+        questionFactory?.resetQuestions()
+        questionFactory?.requestNextQuestion()
+    }
+    
+    // Функция для выключения кнопок
+    private func setButtonsEnabled(_ isEnabled: Bool) {
+        yesButton.isEnabled = isEnabled
+        noButton.isEnabled = isEnabled
+    }
+}
+
 
 /*
  Mock-данные

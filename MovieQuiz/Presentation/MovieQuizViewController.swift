@@ -2,6 +2,16 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
+    // MARK: - аутлеты и экшны
+    //аутлеты
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var textLabel: UILabel!
+    @IBOutlet private weak var countLabel: UILabel!
+    
+    @IBOutlet private weak var yesButton: UIButton!
+    @IBOutlet private weak var noButton: UIButton!
+    
+    
     private var alertPresenter: AlertPresenter?
     private var statisticService: StatisticServiceProtocol?
     
@@ -11,6 +21,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
+    
+    
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -26,6 +38,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         resetQuiz()
         
     }
+    
+    
     
     // MARK: - QuestionFactoryDelegate
     
@@ -57,34 +71,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
-    // MARK: - аутлеты и экшны
-    //аутлеты
-    @IBOutlet private weak var imageView: UIImageView!
-    @IBOutlet private weak var textLabel: UILabel!
-    @IBOutlet private weak var countLabel: UILabel!
     
-    @IBOutlet private weak var yesButton: UIButton!
-    @IBOutlet private weak var noButton: UIButton!
     
-    //батон экшн да
-    @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        setButtonsEnabled(false)
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        showAnswerResult(isCorrect: currentQuestion.correctAnswer)
-    }
-    
-    // батон экшн нет
-    @IBAction private func noButtonClicked(_ sender: UIButton) {
-        setButtonsEnabled(false)
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        showAnswerResult(isCorrect: !currentQuestion.correctAnswer)
-    }
-    
-
     
     // Конверт модели в отображение
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
@@ -164,6 +152,25 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         yesButton.isEnabled = isEnabled
         noButton.isEnabled = isEnabled
     }
+    
+    //батон экшн да
+    @IBAction private func yesButtonClicked(_ sender: UIButton) {
+        setButtonsEnabled(false)
+        guard let currentQuestion = currentQuestion else {
+            return
+        }
+        showAnswerResult(isCorrect: currentQuestion.correctAnswer)
+    }
+    
+    // батон экшн нет
+    @IBAction private func noButtonClicked(_ sender: UIButton) {
+        setButtonsEnabled(false)
+        guard let currentQuestion = currentQuestion else {
+            return
+        }
+        showAnswerResult(isCorrect: !currentQuestion.correctAnswer)
+    }
+    
 }
 
 

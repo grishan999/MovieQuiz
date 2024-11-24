@@ -1,3 +1,9 @@
+//
+//  MovieQuizViewController.swift
+//  MovieQuiz
+//
+//  Created by mac on 28.10.2024.
+//
 import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
@@ -36,14 +42,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         questionFactory = QuestionFactory (moviesLoader: MoviesLoader(), delegate: self)
         
-        showLoadingIndicator()
+        activityIndicator.hidesWhenStopped = true
+        
         questionFactory?.loadData()
         
         resetQuiz()
         
     }
-    
-    
     
     // MARK: - QuestionFactoryDelegate
     
@@ -74,9 +79,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             self.showNextQuestion()
         }
     }
-    
-    
-    
     
     // Конверт модели в отображение
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
@@ -118,7 +120,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         // обновление статистики
         statisticService.store(correct: correctAnswers, total: questionsAmount)
         
-    
+        
         let bestGame = statisticService.bestGame
         let totalAccuracy = String(format: "%.2f", statisticService.totalAccuracy)
         let gamesCount = statisticService.gamesCount
@@ -142,17 +144,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         alertPresenter?.showAlert(on: self, with: alertModel)
     }
     
-    
     // Показываем индикатор загрузки
     private func showLoadingIndicator() {
-        activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
     
     //Скрываем индикатор загрузки
     private func hideLoadingIndicator() {
         activityIndicator.stopAnimating()
-        activityIndicator.isHidden = true
     }
     
     // Алерт при ошибки загрузки
@@ -177,15 +176,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         activityIndicator.isHidden = true // скрываем индикатор загрузки
         questionFactory?.requestNextQuestion()
     }
-
-   public func didFailToLoadData(with error: Error) {
-       showNetworkError(message: error.localizedDescription) // возьмём в качестве сообщения описание ошибки
-       }
     
-    
+    public func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription) // возьмём в качестве сообщения описание ошибки
+    }
     
     // MARK: -  вспомогательные методы
-    // Сброс квиза
     private func resetQuiz() {
         currentQuestionIndex = 0
         correctAnswers = 0
@@ -201,7 +197,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     //MARK: -  Экшены
     
-    //батон экшн да
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         setButtonsEnabled(false)
         guard let currentQuestion = currentQuestion else {
@@ -210,7 +205,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         showAnswerResult(isCorrect: currentQuestion.correctAnswer)
     }
     
-    // батон экшн нет
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         setButtonsEnabled(false)
         guard let currentQuestion = currentQuestion else {

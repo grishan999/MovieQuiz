@@ -1,5 +1,5 @@
 //
-//  QuestionFactoryDelegate 2.swift
+//  QuestionFactoryDelegate.swift
 //  MovieQuiz
 //
 //  Created by mac on 31.10.2024.

@@ -1,5 +1,5 @@
 //
-//  Untitled.swift
+//  QuestionFactory.swift
 //  MovieQuiz
 //
 //  Created by mac on 28.10.2024.
@@ -33,10 +33,6 @@ public class QuestionFactory: QuestionFactoryProtocol {
             }
         }
     }
-    
-    
-    
-    
     
     func setup(delegate: QuestionFactoryDelegate) {
         self.delegate = delegate

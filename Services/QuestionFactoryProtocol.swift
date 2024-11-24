@@ -7,6 +7,7 @@
 
 protocol QuestionFactoryProtocol {
     func resetQuestions()
-    func requestNextQuestion() 
+    func requestNextQuestion()
+    func loadData()
 }
 

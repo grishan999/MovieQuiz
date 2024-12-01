@@ -1,8 +1,8 @@
 //
-//  MoviesLoaderTests.swift
+//  MovieLoaderTest.swift
 //  MovieQuiz
 //
-//  Created by mac on 28.11.2024.
+//  Created by mac on 02.12.2024.
 //
 
 import XCTest

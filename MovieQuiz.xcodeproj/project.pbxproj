@@ -87,7 +87,6 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		043C84982CF9CE9C00FC43B7 /* MovieQuizUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MovieQuizUITests; sourceTree = "<group>"; };
-		045919A22CF874490051D22A /* MovieQuizTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MovieQuizTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,7 +176,6 @@
 			isa = PBXGroup;
 			children = (
 				AD1ABAB02831907B00B3E448 /* MovieQuiz */,
-				045919A22CF874490051D22A /* MovieQuizTests */,
 				043C84982CF9CE9C00FC43B7 /* MovieQuizUITests */,
 				AD1ABAAF2831907B00B3E448 /* Products */,
 			);
@@ -255,9 +253,6 @@
 			);
 			dependencies = (
 				045919A62CF874490051D22A /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				045919A22CF874490051D22A /* MovieQuizTests */,
 			);
 			name = MovieQuizTests;
 			packageProductDependencies = (

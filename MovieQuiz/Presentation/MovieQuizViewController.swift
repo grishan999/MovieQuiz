@@ -6,7 +6,7 @@
 //
 import UIKit
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     
     // MARK: - Outlets, private vars
     
@@ -34,40 +34,10 @@ final class MovieQuizViewController: UIViewController {
         statisticService = StatisticService()
         activityIndicator.hidesWhenStopped = true
         presenter = MovieQuizPresenter(viewController: self)
-            }
-    
-    func showAnswerResult(isCorrect: Bool) {
-        if isCorrect {
-            presenter.correctAnswers += 1
-        }
-        imageView.layer.masksToBounds = true
-        imageView.layer.borderWidth = 8
-        imageView.layer.borderColor = isCorrect ? UIColor.YPGreen.cgColor : UIColor.YPRed.cgColor
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    guard let self = self else { return }
-
-                    self.presenter.showNextQuestion()
-                }
     }
     
-    
-    func showNextQuestion() {
-        if presenter.currentQuestionIndex == presenter.questionsAmount - 1 {
-            let text = "Вы ответили на \(presenter.correctAnswers) из 10, попробуйте еще раз!"
-
-            let viewModel = QuizResultsViewModel(
-                title: "Этот раунд окончен!",
-                text: text,
-                buttonText: "Сыграть ещё раз")
-            showQuizResult(viewModel)
-        } else {
-            presenter.currentQuestionIndex += 1
-            presenter.questionFactory?.requestNextQuestion()
-        }
-    }
-    
-     func show(quizStep step: QuizStepViewModel) {
+    //MARK: - Public methods
+    func show(quizStep step: QuizStepViewModel) {
         imageView.image = step.image
         textLabel.text = step.question
         countLabel.text = step.questionNumber
@@ -75,45 +45,34 @@ final class MovieQuizViewController: UIViewController {
         setButtonsEnabled(true)
     }
     
-
-     func showQuizResult(_ result: QuizResultsViewModel) {
-        guard let statisticService = statisticService else { return }
+    func showQuizResult(_ result: QuizResultsViewModel) {
+        let message = presenter.makeResultsMessage()
         
-         statisticService.store(correct: presenter.correctAnswers, total: presenter.questionsAmount)
+        let alert = UIAlertController(
+            title: result.title,
+            message: message,
+            preferredStyle: .alert)
         
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.presenter.resetQuiz()
+        }
         
-        let bestGame = statisticService.bestGame
-        let totalAccuracy = String(format: "%.2f", statisticService.totalAccuracy)
-        let gamesCount = statisticService.gamesCount
+        alert.addAction(action)
         
-        let message = """
-                Ваш результат: \(presenter.correctAnswers)/\(presenter.questionsAmount)
-                Количество сыгранных квизов: \(gamesCount)
-                Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))
-                Средняя точность: \(totalAccuracy)%
-                """
-        
-         let alertModel = AlertModel(
-                 title: result.title,
-                 message: message,
-                 buttonText: result.buttonText
-             ) { [weak self] in
-                 guard let self = self else { return }
-                 self.presenter?.resetQuiz()
-             }
-             
-             alertPresenter?.showAlert(on: self, with: alertModel)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func showLoadingIndicator() {
         activityIndicator.startAnimating()
     }
     
- func hideLoadingIndicator() {
+    func hideLoadingIndicator() {
         activityIndicator.stopAnimating()
     }
     
-   func showNetworkError(message: String) {
+    func showNetworkError(message: String) {
         hideLoadingIndicator()
         
         let model = AlertModel(title: "Ошибка",
@@ -127,10 +86,13 @@ final class MovieQuizViewController: UIViewController {
         alertPresenter?.showAlert(on: self, with: model)
     }
     
-
+    func highlightImageBorder(isCorrectAnswer: Bool) {
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 8
+        imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+    }
     
-    // Функция для выключения кнопок
-     func setButtonsEnabled(_ isEnabled: Bool) {
+    func setButtonsEnabled(_ isEnabled: Bool) {
         yesButton.isEnabled = isEnabled
         noButton.isEnabled = isEnabled
     }

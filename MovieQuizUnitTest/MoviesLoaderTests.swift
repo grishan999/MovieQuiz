@@ -1,13 +1,11 @@
 //
-//  MovieLoaderTest.swift
+//  MoviesLoaderTests.swift
 //  MovieQuiz
 //
-//  Created by mac on 02.12.2024.
+//  Created by mac on 03.12.2024.
 //
-
 import XCTest
 @testable import MovieQuiz
-
 class MoviesLoaderTests: XCTestCase {
     func testSuccessLoading() throws {
         
@@ -38,7 +36,7 @@ class MoviesLoaderTests: XCTestCase {
         let expectation = expectation(description: "Loading expectation")
         
         loader.loadMovies { result in
-            // Then
+
             switch result {
             case .failure(let error):
                 XCTAssertNotNil(error)

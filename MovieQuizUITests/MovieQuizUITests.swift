@@ -2,7 +2,7 @@
 //  MovieQuizUITests.swift
 //  MovieQuizUITests
 //
-//  Created by mac on 29.11.2024.
+//  Created by mac on 02.12.2024.
 //
 
 import XCTest
@@ -62,32 +62,31 @@ class MovieQuizUITests: XCTestCase {
         
         for _ in 1...10 {
             app.buttons ["Yes"].tap ()
-            sleep (2)
+            sleep (3)
         }
         
         let alert = app.alerts["Alert"]
         
-        XCTAssertTrue (alert.exists)
-        XCTAssertTrue (alert.label == "Этот раунд окончен!")
-        XCTAssertTrue (alert.buttons.firstMatch.label == "Сыграть еще раз")
+        XCTAssertTrue(alert.exists)
+        XCTAssertTrue(alert.label == "Этот раунд окончен!")
+        XCTAssertTrue(alert.buttons.firstMatch.label == "Сыграть ещё раз")
     }
-    
-    func testAlertNotShow () {
-        sleep (2)
-        
+
+    func testAlertNotShow() {
+        sleep(2)
         for _ in 1...10 {
-            app.buttons ["Yes"].tap()
-            sleep (2)
+            app.buttons["No"].tap()
+            sleep(3)
         }
         
         let alert = app.alerts["Alert"]
         alert.buttons.firstMatch.tap()
         
-        sleep (2)
+        sleep(2)
         
         let indexLabel = app.staticTexts["Index"]
-        XCTAssertTrue (indexLabel.label == "1/10")
-        XCTAssertFalse (alert.exists)
         
+        XCTAssertFalse(alert.exists)
+        XCTAssertTrue(indexLabel.label == "1/10")
     }
 }

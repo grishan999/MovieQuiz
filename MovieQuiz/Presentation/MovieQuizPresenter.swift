@@ -89,7 +89,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     func makeResultsMessage() -> String {
         statisticService.store(correct: correctAnswers, total: questionsAmount)
-
         
         let bestGame = statisticService.bestGame
         

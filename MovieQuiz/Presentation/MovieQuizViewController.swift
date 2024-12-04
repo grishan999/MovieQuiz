@@ -8,8 +8,7 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     
-    // MARK: - Outlets, private vars
-    
+    // MARK: - Private Properties
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var countLabel: UILabel!
@@ -100,7 +99,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     }
     
     //MARK: -  Actions
-    
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         setButtonsEnabled(false)
         presenter.yesButtonClicked()

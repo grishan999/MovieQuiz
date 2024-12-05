@@ -1,5 +1,5 @@
 //
-//  Untitled.swift
+//  StatisticServiceProtocol.swift
 //  MovieQuiz
 //
 //  Created by mac on 04.11.2024.
@@ -13,6 +13,3 @@ protocol StatisticServiceProtocol {
     
     func store(correct count: Int, total amount: Int)
 }
-
-
-

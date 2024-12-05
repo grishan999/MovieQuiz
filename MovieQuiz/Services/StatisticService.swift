@@ -48,17 +48,14 @@ final class StatisticService: StatisticServiceProtocol {
     }
     
     func store(correct count: Int, total amount: Int) {
-        // кол-во игр
         gamesCount += 1
         
-        // апдейт общее количество правильных ответов и вопросов
         let updatedCorrectAnswers = storage.integer(forKey: Keys.correctAnswers.rawValue) + count
         let updatedTotalQuestions = storage.integer(forKey: Keys.totalQuestions.rawValue) + amount
         
         storage.set(updatedCorrectAnswers, forKey: Keys.correctAnswers.rawValue)
         storage.set(updatedTotalQuestions, forKey: Keys.totalQuestions.rawValue)
         
-        // чекаем и аплдейтим лучший результат, если текущий результат лучше
         let currentGame = GameResult(correct: count, total: amount, date: Date())
         if currentGame.isBestScore(bestGame) {
             bestGame = currentGame
